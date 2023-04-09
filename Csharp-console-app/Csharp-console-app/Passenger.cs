@@ -1,16 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Csharp_console_app
 {
+    public class Global
+    {
+        public const int UNKNOWN_VALUE = -1;
+    }
+
     public class Passenger
     {
         public string LastName { get; set; }
         public string FirstName { get; set; }
-        public double Age { get; set; }
+        public double? Age { get; set; }
         public string Sex { get; set; }
         public string Occupation { get; set; }
         public string NativeCountry { get; set; }
@@ -30,9 +37,38 @@ namespace Csharp_console_app
             Ship = ship;
         }
 
+        // this below is ugly 
+        // fix later
+        public static double AgeParse(string ageString)
+        {
+            string pattern = @"\d+";
+
+
+            if (ageString.StartsWith("age"))
+            {
+                Match match = Regex.Match(ageString, pattern);
+                double number = double.Parse(match.Value);
+                return number;
+            }
+
+            else if (ageString.StartsWith("Infant"))
+            {
+                Match match = Regex.Match(ageString, pattern);
+                double number = double.Parse(match.Value);
+                return number / 12;
+            }
+
+
+            return Global.UNKNOWN_VALUE;  // for unknown age
+        }
+
         public override string ToString()
         {
-            return $"{this.LastName} {this.FirstName} aged {this.Age}";
+            if (Age != Global.UNKNOWN_VALUE)
+                return $"{LastName} {FirstName} aged {Age}";
+
+            else
+                return $"{LastName} {FirstName} (age unknown)";
         }
     }
 
@@ -43,7 +79,7 @@ namespace Csharp_console_app
         {
             List<Ship> ships = passengers
                 .Select(x => x.Ship)
-                .GroupBy(x => x.ShipID)  
+                .GroupBy(x => x.ShipID)
                 .Select(x => x.First())  // this is wacky but it works
                 .ToList();
 
@@ -86,12 +122,13 @@ namespace Csharp_console_app
             return theChosenOnes;
 
             // this could be used to get the count too! pretty easily
-            // instead of typing
+            //
+            // also instead of typing
             // p.Ship.ShipID == ship.ShipID
             // I could implement ship equality
         }
-    
-        public static List<(string, int)> GetOccupations(this List<Passenger> passengers)
+
+        public static List<(string, int)> GetOccupationsAndAmounts(this List<Passenger> passengers)
         {
             List<(string, int)> occupations = passengers
                 .Select(p => p.Occupation)
@@ -101,6 +138,52 @@ namespace Csharp_console_app
 
             return occupations;
         }
+
+
+        public static List<(string, int, int)> GetAgeGroupAmounts(this List<Passenger> passengers, List<(string, int)> ageGroups)
+        {
+            List<(string, int, int)> ageGroupsWithAmounts = new List<(string, int, int)>() { };
+
+            for(int i = 0; i < ageGroups.Count; i++)
+            {
+                var (name, ageLower) = ageGroups[i];
+                var (_, ageUpper) = i >= ageGroups.Count - 1 ? (null, int.MaxValue) : ageGroups[i + 1];
+
+                int amount = passengers
+                    .Select(p => p.Age)
+                    .Where(a => a >= ageLower && a < ageUpper)
+                    .Count();
+
+                ageGroupsWithAmounts.Add((name, ageLower, amount));
+            }
+
+            int unknownAmount = passengers
+                .Select(p => p.Age)
+                .Where(a => a == Global.UNKNOWN_VALUE)
+                .Count();
+
+            ageGroupsWithAmounts.Add(("Unknown", Global.UNKNOWN_VALUE, unknownAmount));
+
+            return ageGroupsWithAmounts;
+        }
+
+
+        /*
+        public static List<int> GetAgeRangeNumbers2(this List<Passenger> passengers, List<int> ageRanges)
+        {
+            List<int> counts = new List<int>() { };
+            
+            for(int i = 0; i < passengers.Count; i++)
+            {
+                for(int j = 0; j < ageRanges.Count; j++)
+                {
+                    int lower = ageRanges[i - 1]
+                }
+            }
+            
+            return counts;
+        }
+        */
     }
 
     public class Ship

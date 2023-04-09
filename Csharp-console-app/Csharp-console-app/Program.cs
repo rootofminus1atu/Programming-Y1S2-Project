@@ -13,15 +13,16 @@ namespace Csharp_console_app
 
 
 
+
             List<Ship> ships = passengerList.GetShips();
 
             foreach (Ship ship in ships)
                 Console.WriteLine($"{ship.ShipID} arrived on {ship.ArrivalDate} WITH COUNT {ship.Count}");
 
 
-            List<Passenger> filtered = passengerList.GetPassengersOnShip(ships[1]);
+            List<Passenger> filtered = passengerList.GetPassengersOnShip(ships[0]);
 
-            Console.WriteLine($"{ships[1].ShipID} leaving from {ships[1].DepartureSeaport}\nArrived: {ships[1].ArrivalDate} with {filtered.Count} passengers");
+            Console.WriteLine($"{ships[0].ShipID} leaving from {ships[0].DepartureSeaport}\nArrived: {ships[0].ArrivalDate} with {filtered.Count} passengers");
 
             foreach(Passenger passenger in filtered)
                 Console.WriteLine(passenger.ToString());
@@ -30,7 +31,9 @@ namespace Csharp_console_app
 
 
 
-            List<(string, int)> occupations = passengerList.GetOccupations();
+
+
+            List<(string, int)> occupations = passengerList.GetOccupationsAndAmounts();
 
             foreach(var item in occupations)
             {
@@ -38,33 +41,36 @@ namespace Csharp_console_app
                 Console.WriteLine($"uhh {occupation} and {count}");
             }
 
-        }
-
-        // this below is ugly 
-        // fix later
-        static double AgeParse(string ageString)
-        {
-            string pattern = @"\d+";
 
 
-            if (ageString.StartsWith("age"))
+
+            
+            List<(string, int)> ageGroups = new List<(string, int)>() 
+            { 
+                // the number represents the lower bound for your age group
+                ("Infant", 0), 
+                ("Child", 1), 
+                ("Teen", 12), 
+                ("Young Adult", 20),
+                ("Adult", 30),
+                ("Older Adult", 50)
+            };
+
+            List<(string, int, int)> ageGroupAmounts = passengerList.GetAgeGroupAmounts(ageGroups);
+
+            foreach(var item in ageGroupAmounts)
             {
-                Match match = Regex.Match(ageString, pattern);
-                double number = double.Parse(match.Value);
-                return number;
+                var (name, age, amount) = item;
+                if (age != Global.UNKNOWN_VALUE)
+                    Console.WriteLine($"{name} >{age}: {amount}");
+                else
+                    Console.WriteLine($"{name}: {amount}");
             }
 
 
-            else if (ageString.StartsWith("Infant"))
-            {
-                Match match = Regex.Match(ageString, pattern);
-                double number = double.Parse(match.Value);
-                return number / 12;
-            }
-
-
-            return 0;
         }
+
+
 
         static List<Passenger> GetPassengerData(string path)
         {
@@ -88,7 +94,7 @@ namespace Csharp_console_app
 
                         LastName = fields[0],
                         FirstName = fields[1],
-                        Age = AgeParse(fields[2]),
+                        Age = Passenger.AgeParse(fields[2]),
                         Sex = fields[3],
                         Occupation = fields[4],
                         NativeCountry = fields[5],
