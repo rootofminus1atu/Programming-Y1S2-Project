@@ -10,6 +10,49 @@ namespace Csharp_console_app
 
             List<Passenger> passengerList = GetPassengerData(filePath);
 
+            Console.WriteLine("File loaded successfully!");
+
+
+
+            string choice = "";
+
+            while(choice != "4")
+            {
+                Console.Write("Pick a menu option: ");
+                choice = Console.ReadLine();
+
+                if (choice == "1")
+                {
+                    ShipReports(passengerList);
+                }
+                else if (choice == "2")
+                {
+                    OccupationReport(passengerList);
+                }
+                else if (choice == "3")
+                {
+                    AgeReport(passengerList);
+                }
+                else if (choice == "4")
+                {
+                    Console.WriteLine("Goodbye!");
+                }
+                else
+                {
+                    Console.WriteLine("Invalid option");
+                }
+
+            }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -70,6 +113,75 @@ namespace Csharp_console_app
 
         }
 
+        static void ShowMenuOptions()
+        {
+            Console.WriteLine();
+        }
+
+        static void ShipReports(List<Passenger> passengers)
+        {
+            List<Ship> ships = passengers.GetShips();
+
+            string choice = "";
+
+            Console.WriteLine("The available ships are:");
+            for (int i = 0; i < ships.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {ships[i].ShipID}");
+            }
+
+            Console.Write("Pick one: ");
+            choice = Console.ReadLine();
+
+            // insert data validation and stuff
+
+            Ship ship = ships[int.Parse(choice) - 1];
+            List<Passenger> passengersOnShip = passengers.GetPassengersOnShip(ship);
+
+            Console.WriteLine($"{ship.ShipID}: from {ship.DepartureSeaport} to {ship.DestinationCountry} with {passengersOnShip.Count} passengers");
+            foreach(Passenger passenger in passengersOnShip)
+                Console.WriteLine(passenger.ToString());
+        }
+
+        static void OccupationReport(List<Passenger> passengers)
+        {
+            List<(string, int)> occupations = passengers.GetOccupationsAndAmounts();
+
+            foreach (var item in occupations)
+            {
+                var (occupation, count) = item;
+                Console.WriteLine($"Occupation: {occupation}                 Amount: {count}");
+            }
+        }
+
+        static void AgeReport(List<Passenger> passengers)
+        {
+            // PUT THIS SOMEWHERE OUTSIDE LIKE IN GLOBAL
+            // or maybe not
+            // idk
+
+            List<(string, int)> ageGroups = new List<(string, int)>()
+            { 
+                // the number represents the lower bound for your age group
+                ("Infant", 0),
+                ("Child", 1),
+                ("Teen", 12),
+                ("Young Adult", 20),
+                ("Adult", 30),
+                ("Older Adult", 50)
+            };
+
+            List<(string, int, int)> ageGroupAmounts = passengers.GetAgeGroupAmounts(ageGroups);
+
+            foreach (var item in ageGroupAmounts)
+            {
+                var (name, age, amount) = item;
+                if (age != Global.UNKNOWN_VALUE)
+                    Console.WriteLine($"{name} (>{age}): {amount}");
+                else
+                    Console.WriteLine($"{name}: {amount}");
+            }
+        }
 
 
         static List<Passenger> GetPassengerData(string path)

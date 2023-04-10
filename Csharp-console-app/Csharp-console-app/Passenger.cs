@@ -17,7 +17,7 @@ namespace Csharp_console_app
     {
         public string LastName { get; set; }
         public string FirstName { get; set; }
-        public double? Age { get; set; }
+        public double Age { get; set; }
         public string Sex { get; set; }
         public string Occupation { get; set; }
         public string NativeCountry { get; set; }
