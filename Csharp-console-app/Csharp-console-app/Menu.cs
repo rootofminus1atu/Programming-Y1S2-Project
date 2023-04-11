@@ -9,22 +9,24 @@ namespace Csharp_console_app
 {
     internal class Menu
     {
-        public List<MenuOption> Options { get; set; }
+        public Dictionary<int, MenuOption> Options { get; set; }
 
         public Menu(params MenuOption[] options)
         {
-            Options = new List<MenuOption>();
+            Options = new Dictionary<int, MenuOption>();
 
-            foreach (MenuOption option in options)
-                Options.Add(option);
+            for (int i = 0; i < options.Length; i++)
+                Options.Add(i + 1, options[i]);
 
-            Options.Add(new MenuOption("Exit", () => { }));
+            Options.Add(options.Length + 1, new MenuOption("Exit", () => { }));
         }
+
+        
 
         public void Display()
         {
-            for (int i = 0; i < Options.Count; i++)
-                Console.WriteLine($"{i + 1}. {Options[i].Name}");
+            foreach (var (num, option) in Options)
+                Console.WriteLine($"{num}. {option.Name}");
         }
 
         public void Run()
@@ -38,7 +40,15 @@ namespace Csharp_console_app
                 Console.Write("Pick a menu optiooooon: ");
                 choice = Console.ReadLine();
 
-                Options[int.Parse(choice) - 1].Action();
+                try
+                {
+                    Options[int.Parse(choice)].Action();
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    Console.WriteLine("Invalid choice");
+                }
+                
             }
 
  
@@ -50,7 +60,7 @@ namespace Csharp_console_app
         public string Name { get; set; }
         public Action Action { get; set; }
 
-        // the menu optios could have additional parameters for a "success" and "fail" message
+        // the menu options could have additional parameters for a "success" and "fail" message
 
 
         public MenuOption(string name, Action action)
