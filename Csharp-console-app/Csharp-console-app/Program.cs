@@ -14,6 +14,29 @@ namespace Csharp_console_app
 
 
 
+            Menu mainMenu = new Menu(
+                new MenuOption("1st option", DoStuff),
+                new MenuOption("2nd option", () => AgeReport(passengerList))
+                );
+
+            mainMenu.Run();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            Console.WriteLine("\n\n\nlol menu below\n");
+
             string choice = "";
 
             while(choice != "4")
@@ -112,6 +135,11 @@ namespace Csharp_console_app
             }
 
 
+        }
+
+        static void DoStuff()
+        {
+            Console.WriteLine("Hello there");
         }
 
         static void ShowMenuOptions()
