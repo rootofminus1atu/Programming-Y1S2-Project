@@ -10,18 +10,28 @@ namespace Csharp_console_app
     internal class Menu
     {
         public Dictionary<int, MenuOption> Options { get; set; }
+        public bool WithExit;
 
-        public Menu(params MenuOption[] options)
+        public Menu(params MenuOption[] options) : this(withExit: true, options)
+        {
+
+        }
+
+        public Menu(bool withExit, params MenuOption[] options)
         {
             Options = new Dictionary<int, MenuOption>();
 
             for (int i = 0; i < options.Length; i++)
                 Options.Add(i + 1, options[i]);
 
-            Options.Add(options.Length + 1, new MenuOption("Exit", () => { }));
+
+            WithExit = withExit;
+
+            if (withExit)
+                Options.Add(options.Length + 1, new MenuOption("Exit", () => { }));
         }
 
-        
+
 
         public void Display()
         {
@@ -29,22 +39,29 @@ namespace Csharp_console_app
                 Console.WriteLine($"{num}. {option.Name}");
         }
 
+
         public void Run()
         {
             string choice = "";
 
             while (choice != $"{Options.Count}")
             {
+                choice = "";
+                int choiceNum;
+
                 this.Display();
 
-                Console.Write("Pick a menu optiooooon: ");
-                choice = Console.ReadLine();
+                while(!(int.TryParse(choice, out choiceNum) && Options.ContainsKey(choiceNum)))
+                {
+                    Console.Write("Pick a menu option: ");
+                    choice = Console.ReadLine();
+                }
 
-                if (int.TryParse(choice, out int choiceNum) && Options.ContainsKey(choiceNum))
-                    Options[choiceNum].Action();
+                Options[choiceNum].Action();
 
-                else
-                    Console.WriteLine("Invalid choice");
+
+                if (!WithExit)
+                    break;
             }
         }
     }

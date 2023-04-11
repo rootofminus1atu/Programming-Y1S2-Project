@@ -16,8 +16,10 @@ namespace Csharp_console_app
 
 
             Menu mainMenu = new Menu(
-                new MenuOption("1st option", DoStuff),
-                new MenuOption("2nd option", () => AgeReport(passengerList))
+                withExit: true,
+                new MenuOption("Ship reports", () => ShipReports2()),
+                new MenuOption("Occupation report", () => OccupationReport(passengerList)),
+                new MenuOption("Age report", () => AgeReport(passengerList))
                 );
 
             mainMenu.Run();
@@ -34,54 +36,7 @@ namespace Csharp_console_app
 
 
 
-
-
-            Console.WriteLine("\n\n\nlol menu below\n");
-
-            string choice = "";
-
-            while(choice != "4")
-            {
-                ShowMenuOptions();
-                Console.Write("Pick a menu option: ");
-                choice = Console.ReadLine();
-
-                if (choice == "1")
-                {
-                    ShipReports(passengerList);
-                }
-                else if (choice == "2")
-                {
-                    OccupationReport(passengerList);
-                }
-                else if (choice == "3")
-                {
-                    AgeReport(passengerList);
-                }
-                else if (choice == "4")
-                {
-                    Console.WriteLine("Goodbye!");
-                }
-                else
-                {
-                    Console.WriteLine("Invalid option");
-                }
-
-            }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            /*
             List<Ship> ships = passengerList.GetShips();
 
             foreach (Ship ship in ships)
@@ -135,28 +90,22 @@ namespace Csharp_console_app
                     Console.WriteLine($"{name}: {amount}");
             }
 
-
+            */
         }
 
-        static void DoStuff()
+        static void ShipReports2()
         {
-            Console.WriteLine("\nHello there, here's another menu!");
+            Console.WriteLine("\nHere's another menu!");
 
             Menu subMenu = new Menu(
+                withExit: false,
                 new MenuOption("Submenu 1", () => Console.WriteLine(111)),
-                new MenuOption("Submenu 1", () => Console.WriteLine(222))
+                new MenuOption("Submenu 2", () => Console.WriteLine(222))
                 );
 
             subMenu.Run();
         }
 
-        static void ShowMenuOptions()
-        {
-            Console.WriteLine("1. Ship reports");
-            Console.WriteLine("2. Occupation report");
-            Console.WriteLine("3. Age report");
-            Console.WriteLine("4. Exit");
-        }
 
         static void ShipReports(List<Passenger> passengers)
         {
