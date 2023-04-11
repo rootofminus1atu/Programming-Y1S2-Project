@@ -40,18 +40,12 @@ namespace Csharp_console_app
                 Console.Write("Pick a menu optiooooon: ");
                 choice = Console.ReadLine();
 
-                try
-                {
-                    Options[int.Parse(choice)].Action();
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    Console.WriteLine("Invalid choice");
-                }
-                
-            }
+                if (int.TryParse(choice, out int choiceNum) && Options.ContainsKey(choiceNum))
+                    Options[choiceNum].Action();
 
- 
+                else
+                    Console.WriteLine("Invalid choice");
+            }
         }
     }
 

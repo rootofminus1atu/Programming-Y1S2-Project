@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using System.Threading.Channels;
 
 namespace Csharp_console_app
 {
@@ -139,7 +140,14 @@ namespace Csharp_console_app
 
         static void DoStuff()
         {
-            Console.WriteLine("Hello there");
+            Console.WriteLine("\nHello there, here's another menu!");
+
+            Menu subMenu = new Menu(
+                new MenuOption("Submenu 1", () => Console.WriteLine(111)),
+                new MenuOption("Submenu 1", () => Console.WriteLine(222))
+                );
+
+            subMenu.Run();
         }
 
         static void ShowMenuOptions()
