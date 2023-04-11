@@ -11,6 +11,7 @@ namespace Csharp_console_app
     {
         public Dictionary<int, MenuOption> Options { get; set; }
         public bool WithExit;
+        // this could have additional properties such as startText, endText, etc.
 
         public Menu(params MenuOption[] options) : this(withExit: true, options)
         {
