@@ -18,6 +18,7 @@ namespace Csharp_console_app
 
             while(choice != "4")
             {
+                ShowMenuOptions();
                 Console.Write("Pick a menu option: ");
                 choice = Console.ReadLine();
 
@@ -115,7 +116,10 @@ namespace Csharp_console_app
 
         static void ShowMenuOptions()
         {
-            Console.WriteLine();
+            Console.WriteLine("1. Ship reports");
+            Console.WriteLine("2. Occupation report");
+            Console.WriteLine("3. Age report");
+            Console.WriteLine("4. Exit");
         }
 
         static void ShipReports(List<Passenger> passengers)
