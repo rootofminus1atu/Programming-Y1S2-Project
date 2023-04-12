@@ -34,7 +34,7 @@ namespace Csharp_console_app
 
 
 
-        public void Display()
+        public void DisplayOptions()
         {
             foreach (var (num, option) in Options)
                 Console.WriteLine($"{num}. {option.Name}");
@@ -50,7 +50,7 @@ namespace Csharp_console_app
                 choice = "";
                 int choiceNum;
 
-                this.Display();
+                this.DisplayOptions();
 
                 while(!(int.TryParse(choice, out choiceNum) && Options.ContainsKey(choiceNum)))
                 {

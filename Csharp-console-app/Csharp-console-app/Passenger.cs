@@ -41,34 +41,36 @@ namespace Csharp_console_app
         // fix later
         public static double AgeParse(string ageString)
         {
-            string pattern = @"\d+";
+            string pattern = @"-?\d*\.?\d+";
+            Match match = Regex.Match(ageString, pattern);
 
-
-            if (ageString.StartsWith("age"))
+            if (match.Success)
             {
-                Match match = Regex.Match(ageString, pattern);
                 double number = double.Parse(match.Value);
-                return number;
-            }
 
-            else if (ageString.StartsWith("Infant"))
-            {
-                Match match = Regex.Match(ageString, pattern);
-                double number = double.Parse(match.Value);
-                return number / 12;
+                if (number < 0)
+                    return Global.UNKNOWN_VALUE;
+
+                if (ageString.ToLower().StartsWith("age"))
+                    return number;
+
+                else if (ageString.ToLower().StartsWith("infant in months"))
+                    return number / 12;
             }
 
 
             return Global.UNKNOWN_VALUE;  // for unknown age
         }
 
+        
+
         public override string ToString()
         {
             if (Age != Global.UNKNOWN_VALUE)
-                return $"{LastName} {FirstName} aged {Age}";
+                return $"{FirstName} {LastName} aged {Age}";
 
             else
-                return $"{LastName} {FirstName} (age unknown)";
+                return $"{FirstName} {LastName} (age unknown)";
         }
     }
 
@@ -93,7 +95,7 @@ namespace Csharp_console_app
 
             foreach (Passenger passenger in passengers)
             {
-                Ship ship = uniqueShips.Find(s => s.ShipID == passenger.Ship.ShipID);
+                Ship? ship = uniqueShips.Find(s => s.ShipID == passenger.Ship.ShipID);
 
                 if (ship == null)
                 {
@@ -191,10 +193,10 @@ namespace Csharp_console_app
         public string DestinationCountry { get; set; }
         public string DepartureSeaport { get; set; }
         public string ShipID { get; set; }
-        public string ArrivalDate { get; set; }
+        public DateOnly ArrivalDate { get; set; }
         public int Count { get; set; }
 
-        public Ship(string destinationCountry, string departureSeaport, string shipID, string arrivalDate)
+        public Ship(string destinationCountry, string departureSeaport, string shipID, DateOnly arrivalDate)
         {
             DestinationCountry = destinationCountry;
             DepartureSeaport = departureSeaport;
@@ -205,13 +207,15 @@ namespace Csharp_console_app
 
     }
 
-    public class Report
+    public class Age
     {
-        public List<Passenger> Passengers { get; set; }
+        public int Years { get; set; }
+        public int Months { get; set; }
 
-        public Report(List<Passenger> passengers)
-        {
-            Passengers = passengers;
+        public Age(int years, int months) 
+        { 
+            Years = years;
+            Months = months;
         }
     }
 

@@ -1,4 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Drawing;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Threading.Channels;
 
 namespace Csharp_console_app
@@ -7,17 +10,14 @@ namespace Csharp_console_app
     {
         static void Main(string[] args)
         {
-            string filePath = @"../../../../../faminefiletoanalyse.csv";
+            string filePath = @"../../../../../testfile.csv";
 
             List<Passenger> passengerList = GetPassengerData(filePath);
-
-            Console.WriteLine("File loaded successfully!");
-
 
 
             Menu mainMenu = new Menu(
                 withExit: true,
-                new MenuOption("Ship reports", () => ShipReports2(passengerList)),
+                new MenuOption("Ship reports", () => ShipReports(passengerList)),
                 new MenuOption("Occupation report", () => OccupationReport(passengerList)),
                 new MenuOption("Age report", () => AgeReport(passengerList))
                 );
@@ -26,7 +26,7 @@ namespace Csharp_console_app
 
         }
 
-        static void ShipReports2(List<Passenger> passengers)
+        static void ShipReports(List<Passenger> passengers)
         {
             List<Ship> ships = passengers.GetShips();
 
@@ -47,14 +47,15 @@ namespace Csharp_console_app
         static void ShowShipInfoAndPassengers(Ship ship, List<Passenger> passengers)
         {
             List<Passenger> passengersOnShip = passengers.GetPassengersOnShip(ship);
-
-            Console.WriteLine($"{ship.ShipID}: from {ship.DepartureSeaport} to {ship.DestinationCountry} with {passengersOnShip.Count} passengers");
+            
+            Console.WriteLine($"{ship.ShipID}: from {ship.DepartureSeaport} to {ship.DestinationCountry} with {passengersOnShip.Count} passengers, arrives {ship.ArrivalDate}");
+            
             foreach (Passenger passenger in passengersOnShip)
                 Console.WriteLine(passenger.ToString());
         }
 
 
-        static void ShipReports(List<Passenger> passengers)
+        static void ShipReports2(List<Passenger> passengers)
         {
             List<Ship> ships = passengers.GetShips();
 
@@ -83,10 +84,11 @@ namespace Csharp_console_app
         {
             List<(string, int)> occupations = passengers.GetOccupationsAndAmounts();
 
+            Console.WriteLine($"{"Occupation", -46} Amount");
             foreach (var item in occupations)
             {
                 var (occupation, count) = item;
-                Console.WriteLine($"Occupation: {occupation}                 Amount: {count}");
+                Console.WriteLine($"{occupation, -46} {count}");
             }
         }
 
@@ -112,10 +114,13 @@ namespace Csharp_console_app
             foreach (var item in ageGroupAmounts)
             {
                 var (name, age, amount) = item;
+
+                string nameAgeTemp = $"{name} (>{age})";
+
                 if (age != Global.UNKNOWN_VALUE)
-                    Console.WriteLine($"{name} (>{age}): {amount}");
+                    Console.WriteLine($"{nameAgeTemp, -20}: {amount}");
                 else
-                    Console.WriteLine($"{name}: {amount}");
+                    Console.WriteLine($"{name, -20}: {amount}");
             }
         }
 
@@ -123,46 +128,89 @@ namespace Csharp_console_app
         static List<Passenger> GetPassengerData(string path)
         {
             List<Passenger> passengers = new List<Passenger>();
-
-            using (StreamReader sr = File.OpenText(path))
+            try
             {
-                // read and discard the first line
-                sr.ReadLine();
-
-                string? s;
-                while ((s = sr.ReadLine()) != null)
+                using (StreamReader sr = File.OpenText(path))
                 {
-                    string[] fields = s.Split(",");
+                    // read and discard the first line
+                    sr.ReadLine();
 
-                    Passenger passenger = new()  // wack syntax
+                    string? s;
+                    while ((s = sr.ReadLine()) != null)
                     {
-                        // the current implementation depends on the correct ordering of the columns
-                        // it's possible to make it depend on the header row names
-                        // but I'm going with the former, since changing the header row is easier than rearranging the columns
+                        string[] fields = s.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-                        LastName = fields[0],
-                        FirstName = fields[1],
-                        Age = Passenger.AgeParse(fields[2]),
-                        Sex = fields[3],
-                        Occupation = fields[4],
-                        NativeCountry = fields[5],
-                        Ship = new Ship(
-                            fields[6],
-                            fields[7],
-                            fields[8],
-                            fields[9]
-                            )
-                    };
+                        if (fields.Length < 10)
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkYellow;
+                            Console.WriteLine($"[Warning] Line '{s}' has fewer than 10 non-empty fields. Skipping.");
+                            Console.ResetColor();
+                            continue;
+                        }
 
-                    passengers.Add(passenger);
+                        string dateString = fields[9];
+                        DateOnly date;
 
-                    // debug stuff
-                    // Console.WriteLine(passenger.ToString());
+                        if (!DateOnly.TryParse(dateString, CultureInfo.GetCultureInfo("en-US"), DateTimeStyles.None, out date))
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkYellow;
+                            Console.WriteLine($"[Warning] Line '{s}' has an incorrect date format ({dateString}). Skipping.");
+                            Console.ResetColor();
+                            continue;
+                        }
+
+
+                        Passenger passenger = new()  // wack syntax
+                        {
+                            // the current implementation depends on the correct ordering of the columns
+                            // it's possible to make it depend on the header row names
+                            // but I'm going with the former, since changing the header row is easier than rearranging all the columns
+
+                            LastName = fields[0],
+                            FirstName = fields[1],
+                            Age = Passenger.AgeParse(fields[2]),
+                            Sex = fields[3],
+                            Occupation = fields[4],
+                            NativeCountry = fields[5],
+                            Ship = new Ship(
+                                fields[6],
+                                fields[7],
+                                fields[8],
+                                date
+                                )
+                        };
+
+                        passengers.Add(passenger);
+
+                        // debug stuff
+                        // Console.WriteLine(passenger.ToString());
+                        Console.WriteLine(s);
+                    }
                 }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("File loaded successfully!");
+                Console.ResetColor();
+            }
+            catch (Exception ex) when (
+                ex is DirectoryNotFoundException ||
+                ex is FileNotFoundException ||
+                ex is UnauthorizedAccessException ||
+                ex is IOException)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"[ERROR] {ex.Message}");
+                Console.ResetColor();
+
+                Environment.Exit(0);
             }
 
             return passengers;
         }
+
+
+
+
     }
 }
 
