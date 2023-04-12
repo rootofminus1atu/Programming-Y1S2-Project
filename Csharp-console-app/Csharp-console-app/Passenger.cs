@@ -11,6 +11,7 @@ namespace Csharp_console_app
     public class Global
     {
         public const int UNKNOWN_VALUE = -1;
+        public static Age UNKNOWN_AGE = new Age(-1, -1);
     }
 
     public class Passenger
@@ -39,6 +40,7 @@ namespace Csharp_console_app
 
         // this below is ugly 
         // fix later
+        // STILL needs to be fixed
         public static double AgeParse(string ageString)
         {
             string pattern = @"-?\d*\.?\d+";
@@ -61,14 +63,10 @@ namespace Csharp_console_app
 
             return Global.UNKNOWN_VALUE;  // for unknown age
         }
-
-        
-
         public override string ToString()
         {
             if (Age != Global.UNKNOWN_VALUE)
-                return $"{FirstName} {LastName} aged {Age}";
-
+                return $"{FirstName} {LastName} aged {Age:0.}";
             else
                 return $"{FirstName} {LastName} (age unknown)";
         }
@@ -123,9 +121,7 @@ namespace Csharp_console_app
 
             return theChosenOnes;
 
-            // this could be used to get the count too! pretty easily
-            //
-            // also instead of typing
+            // instead of typing
             // p.Ship.ShipID == ship.ShipID
             // I could implement ship equality
         }
@@ -169,23 +165,6 @@ namespace Csharp_console_app
             return ageGroupsWithAmounts;
         }
 
-
-        /*
-        public static List<int> GetAgeRangeNumbers2(this List<Passenger> passengers, List<int> ageRanges)
-        {
-            List<int> counts = new List<int>() { };
-            
-            for(int i = 0; i < passengers.Count; i++)
-            {
-                for(int j = 0; j < ageRanges.Count; j++)
-                {
-                    int lower = ageRanges[i - 1]
-                }
-            }
-            
-            return counts;
-        }
-        */
     }
 
     public class Ship
@@ -209,6 +188,7 @@ namespace Csharp_console_app
 
     public class Age
     {
+        // I don't think this class is needed, I'm keeping it just as an idea
         public int Years { get; set; }
         public int Months { get; set; }
 
@@ -216,6 +196,42 @@ namespace Csharp_console_app
         { 
             Years = years;
             Months = months;
+        }
+
+        public static Age AgeParse2(string ageString)
+        {
+            string pattern = @"-?\d*\.?\d+";
+            Match match = Regex.Match(ageString, pattern);
+
+            if (!match.Success)
+                return Global.UNKNOWN_AGE;
+
+            bool intSuccess = int.TryParse(match.Value, out int num);
+
+            if (!intSuccess)
+                return Global.UNKNOWN_AGE;
+
+            if (num < 0)
+                return Global.UNKNOWN_AGE;
+
+
+            if (ageString.ToLower().StartsWith("age"))
+                return new Age(num, 0);
+            else if (ageString.ToLower().StartsWith("infant in months"))
+                return new Age(0, num);
+
+            else
+                return Global.UNKNOWN_AGE;
+        }
+
+        public override string ToString()
+        {
+            if (Months == 0)
+                return $"{Years}";
+            else if (Years == 0)
+                return $"{Months} months";
+            else
+                return $"{Years} and {Months} months";
         }
     }
 

@@ -12,6 +12,7 @@ namespace Csharp_console_app
         public Dictionary<int, MenuOption> Options { get; set; }
         public bool WithExit;
         // this could have additional properties such as startText, endText, etc.
+        // and additional methods for adding special messages
 
         public Menu(params MenuOption[] options) : this(withExit: true, options)
         {
@@ -36,8 +37,12 @@ namespace Csharp_console_app
 
         public void DisplayOptions()
         {
+            Console.WriteLine("");
+
             foreach (var (num, option) in Options)
                 Console.WriteLine($"{num}. {option.Name}");
+
+            Console.WriteLine("");
         }
 
 
@@ -54,7 +59,7 @@ namespace Csharp_console_app
 
                 while(!(int.TryParse(choice, out choiceNum) && Options.ContainsKey(choiceNum)))
                 {
-                    Console.Write("Pick a menu option: ");
+                    Console.Write("> ");
                     choice = Console.ReadLine();
                 }
 

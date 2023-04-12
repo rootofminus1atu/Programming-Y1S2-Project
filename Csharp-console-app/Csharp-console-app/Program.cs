@@ -16,7 +16,6 @@ namespace Csharp_console_app
 
 
             Menu mainMenu = new Menu(
-                withExit: true,
                 new MenuOption("Ship reports", () => ShipReports(passengerList)),
                 new MenuOption("Occupation report", () => OccupationReport(passengerList)),
                 new MenuOption("Age report", () => AgeReport(passengerList))
@@ -39,7 +38,7 @@ namespace Csharp_console_app
                 menuOptions
                 );
 
-            Console.WriteLine("\nThe available ships are: ");
+            Console.WriteLine("The available ships are: ");
 
             subMenu.Run();
         }
@@ -94,7 +93,7 @@ namespace Csharp_console_app
 
         static void AgeReport(List<Passenger> passengers)
         {
-            // PUT THIS SOMEWHERE OUTSIDE LIKE IN GLOBAL
+            // this ageGroups list could be in global
             // or maybe not
             // idk
 
