@@ -11,15 +11,17 @@ namespace Csharp_console_app
     {
         public Dictionary<int, MenuOption> Options { get; set; }
         public bool WithExit;
+        public string Prompt;
         // this could have additional properties such as startText, endText, etc.
         // and additional methods for adding special messages
 
-        public Menu(params MenuOption[] options) : this(withExit: true, options)
-        {
+        // for optional arguments 
+        // probably not a good implementation considering how named and params arguments work
+        public Menu(params MenuOption[] options) : this(withExit: true, prompt: ">", options) { }
+        public Menu(bool withExit, params MenuOption[] options) : this(withExit: withExit, prompt: ">", options) { }
+        public Menu(string prompt, params MenuOption[] options) : this(withExit: true, prompt: prompt, options) { }
 
-        }
-
-        public Menu(bool withExit, params MenuOption[] options)
+        public Menu(bool withExit = true, string prompt = ">", params MenuOption[] options)
         {
             Options = new Dictionary<int, MenuOption>();
 
@@ -31,6 +33,9 @@ namespace Csharp_console_app
 
             if (withExit)
                 Options.Add(options.Length + 1, new MenuOption("Exit", () => { }));
+
+
+            Prompt = prompt;
         }
 
 
@@ -59,7 +64,7 @@ namespace Csharp_console_app
 
                 while(!(int.TryParse(choice, out choiceNum) && Options.ContainsKey(choiceNum)))
                 {
-                    Console.Write("> ");
+                    Console.Write($"{Prompt} ");
                     choice = Console.ReadLine();
                 }
 

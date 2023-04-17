@@ -16,6 +16,7 @@ namespace Csharp_console_app
 
 
             Menu mainMenu = new Menu(
+                prompt: "Pick a menu option:",
                 new MenuOption("Ship reports", () => ShipReports(passengerList)),
                 new MenuOption("Occupation report", () => OccupationReport(passengerList)),
                 new MenuOption("Age report", () => AgeReport(passengerList))
@@ -35,6 +36,7 @@ namespace Csharp_console_app
 
             Menu subMenu = new Menu(
                 withExit: false,
+                prompt: "Pick a ship:",
                 menuOptions
                 );
 
@@ -54,6 +56,7 @@ namespace Csharp_console_app
         }
 
 
+        // outdated
         static void ShipReports2(List<Passenger> passengers)
         {
             List<Ship> ships = passengers.GetShips();
