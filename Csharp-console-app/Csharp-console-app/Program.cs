@@ -10,9 +10,10 @@ namespace Csharp_console_app
     {
         static void Main(string[] args)
         {
-            string filePath = @"../../../../../testfile.csv";
+            string filePath = @"../../../../../faminefiletoanalyse.csv";
 
             List<Passenger> passengerList = GetPassengerData(filePath);
+
 
 
             Menu mainMenu = new Menu(
@@ -86,7 +87,7 @@ namespace Csharp_console_app
         {
             List<(string, int)> occupations = passengers.GetOccupationsAndAmounts();
 
-            Console.WriteLine($"{"Occupation", -46} Amount");
+            Console.WriteLine($"{"Occupation",-46} Amount");
             foreach (var item in occupations)
             {
                 var (occupation, count) = item;
@@ -186,7 +187,7 @@ namespace Csharp_console_app
 
                         // debug stuff
                         // Console.WriteLine(passenger.ToString());
-                        Console.WriteLine(s);
+                        // Console.WriteLine(s);
                     }
                 }
 
@@ -209,66 +210,5 @@ namespace Csharp_console_app
 
             return passengers;
         }
-
-
-
-
     }
 }
-
-
-/*
-List<Ship> ships = passengerList.GetShips();
-
-foreach (Ship ship in ships)
-    Console.WriteLine($"{ship.ShipID} arrived on {ship.ArrivalDate} WITH COUNT {ship.Count}");
-
-
-List<Passenger> filtered = passengerList.GetPassengersOnShip(ships[0]);
-
-Console.WriteLine($"{ships[0].ShipID} leaving from {ships[0].DepartureSeaport}\nArrived: {ships[0].ArrivalDate} with {filtered.Count} passengers");
-
-foreach(Passenger passenger in filtered)
-    Console.WriteLine(passenger.ToString());
-
-Console.WriteLine(filtered.Count);
-
-
-
-
-
-List<(string, int)> occupations = passengerList.GetOccupationsAndAmounts();
-
-foreach(var item in occupations)
-{
-    var (occupation, count) = item;
-    Console.WriteLine($"uhh {occupation} and {count}");
-}
-
-
-
-
-
-List<(string, int)> ageGroups = new List<(string, int)>() 
-{ 
-    // the number represents the lower bound for your age group
-    ("Infant", 0), 
-    ("Child", 1), 
-    ("Teen", 12), 
-    ("Young Adult", 20),
-    ("Adult", 30),
-    ("Older Adult", 50)
-};
-
-List<(string, int, int)> ageGroupAmounts = passengerList.GetAgeGroupAmounts(ageGroups);
-
-foreach(var item in ageGroupAmounts)
-{
-    var (name, age, amount) = item;
-    if (age != Global.UNKNOWN_VALUE)
-        Console.WriteLine($"{name} >{age}: {amount}");
-    else
-        Console.WriteLine($"{name}: {amount}");
-}
-
-*/

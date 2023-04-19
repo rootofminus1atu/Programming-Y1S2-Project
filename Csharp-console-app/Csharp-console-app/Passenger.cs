@@ -11,7 +11,7 @@ namespace Csharp_console_app
     public class Global
     {
         public const int UNKNOWN_VALUE = -1;
-        public static Age UNKNOWN_AGE = new Age(-1, -1);
+        public static Age UNKNOWN_AGE = new Age(-1, -1);  // unused
     }
 
     public class Passenger
@@ -66,7 +66,7 @@ namespace Csharp_console_app
         public override string ToString()
         {
             if (Age != Global.UNKNOWN_VALUE)
-                return $"{FirstName} {LastName} aged {Age:0.}";
+                return $"{FirstName} {LastName} aged {Age:0.###}";
             else
                 return $"{FirstName} {LastName} (age unknown)";
         }
@@ -188,7 +188,7 @@ namespace Csharp_console_app
 
     public class Age
     {
-        // I don't think this class is needed, I'm keeping it just as an idea
+        // I don't think this class is needed (or a good idea), I'm keeping it just as an idea
         public int Years { get; set; }
         public int Months { get; set; }
 
