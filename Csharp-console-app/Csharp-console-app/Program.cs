@@ -4,6 +4,11 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading.Channels;
 
+// todos:
+// turn the age method thing into working with doubles not just ints
+// improve the Menu maker class (add a start message)
+// add xml documentation thing
+
 namespace Csharp_console_app
 {
     internal class Program
