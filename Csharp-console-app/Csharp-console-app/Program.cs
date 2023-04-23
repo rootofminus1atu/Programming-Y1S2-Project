@@ -1,13 +1,15 @@
-﻿using System;
-using System.Drawing;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using System.Threading.Channels;
+﻿/*
+ *                     Program.cs
+ * 
+ *  The main part of the program. Here the data is first
+ *  collected from a file, it then gets stored and processed
+ *  in Passenger.cs, and then displayed here with the help
+ *  of Menu.cs
+ *  
+ */
 
-// todos:
-// turn the age method thing into working with doubles not just ints
-// improve the Menu maker class (add a start message)
-// add xml documentation thing
+
+using System.Globalization;
 
 namespace Csharp_console_app
 {
@@ -61,33 +63,6 @@ namespace Csharp_console_app
                 Console.WriteLine(passenger.ToString());
         }
 
-
-        // outdated
-        static void ShipReports2(List<Passenger> passengers)
-        {
-            List<Ship> ships = passengers.GetShips();
-
-            string choice = "";
-
-            Console.WriteLine("The available ships are:");
-            for (int i = 0; i < ships.Count; i++)
-            {
-                Console.WriteLine($"{i + 1}. {ships[i].ShipID}");
-            }
-
-            Console.Write("Pick one: ");
-            choice = Console.ReadLine();
-
-            // insert data validation and stuff
-
-            Ship ship = ships[int.Parse(choice) - 1];
-            List<Passenger> passengersOnShip = passengers.GetPassengersOnShip(ship);
-
-            Console.WriteLine($"{ship.ShipID}: from {ship.DepartureSeaport} to {ship.DestinationCountry} with {passengersOnShip.Count} passengers");
-            foreach(Passenger passenger in passengersOnShip)
-                Console.WriteLine(passenger.ToString());
-        }
-
         static void OccupationReport(List<Passenger> passengers)
         {
             List<(string, int)> occupations = passengers.GetOccupationsAndAmounts();
@@ -136,6 +111,7 @@ namespace Csharp_console_app
         static List<Passenger> GetPassengerData(string path)
         {
             List<Passenger> passengers = new List<Passenger>();
+
             try
             {
                 using (StreamReader sr = File.OpenText(path))

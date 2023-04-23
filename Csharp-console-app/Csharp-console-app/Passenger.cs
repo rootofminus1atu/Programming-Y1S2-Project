@@ -1,19 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
+﻿/*
+ *                         Passenger.cs
+ * 
+ *  Here you can find the classes responsible for storing
+ *  and manipulating the data, mainly:
+ *  - Passenger
+ *  - PassengerExtension
+ *  - Ship
+ *  
+ *  After the data is processed here it can be used in Program.cs
+ *  
+ */
+
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Csharp_console_app
 {
+    /// <summary>
+    /// Global constants and variables
+    /// </summary>
     public class Global
     {
         public const int UNKNOWN_VALUE = -1;
         public static Age UNKNOWN_AGE = new Age(-1, -1);  // unused
     }
 
+
+    /// <summary>
+    /// Represents a passenger and their information
+    /// </summary>
     public class Passenger
     {
         public string LastName { get; set; }
@@ -38,12 +52,14 @@ namespace Csharp_console_app
             Ship = ship;
         }
 
-        // this below is ugly 
-        // fix later
-        // STILL needs to be fixed
+        /// <summary>
+        /// Parses 
+        /// </summary>
+        /// <param name="passengers">A list of passengers</param>
+        /// <returns>A list of all the unique ships from the Passenger list</returns>
         public static double AgeParse(string ageString)
         {
-            string pattern = @"-?\d*\.?\d+";
+            string pattern = @"-?\d*\.?\d+";  // detects any number in a string
             Match match = Regex.Match(ageString, pattern);
 
             if (match.Success)
@@ -60,7 +76,6 @@ namespace Csharp_console_app
                     return number / 12;
             }
 
-
             return Global.UNKNOWN_VALUE;  // for unknown age
         }
         public override string ToString()
@@ -72,9 +87,17 @@ namespace Csharp_console_app
         }
     }
 
+
+    /// <summary>
+    /// Provides methods that can be used on a list, array, or any other structure consisting of Passenger objects
+    /// </summary>
     public static class PassengerExtension
     {
-        // the implementation below gets only a list of unique ships, it tells us nothing about how many passengers there are on each
+        /// <summary>
+        /// Returns a list of unique ships that the passengers have traveled on
+        /// </summary>
+        /// <param name="passengers">A list of passengers</param>
+        /// <returns>A list of all the unique ships from the Passenger list</returns>
         public static List<Ship> GetShips(this List<Passenger> passengers)
         {
             List<Ship> ships = passengers
@@ -113,6 +136,13 @@ namespace Csharp_console_app
             return uniqueShips;
         }
 
+
+        /// <summary>
+        /// Returns a list of passengers who have traveled on a specified ship
+        /// </summary>
+        /// <param name="passengers">A list of passengers</param>
+        /// <param name="ship">The ship of interest</param>
+        /// <returns>A list of passengers who have traveled on the specified ship</returns>
         public static List<Passenger> GetPassengersOnShip(this List<Passenger> passengers, Ship ship)
         {
             List<Passenger> theChosenOnes = passengers
@@ -126,6 +156,12 @@ namespace Csharp_console_app
             // I could implement ship equality
         }
 
+
+        /// <summary>
+        /// Returns a list of tuples representing the number of passengers for each unique occupation
+        /// </summary>
+        /// <param name="passengers">A list of passengers</param>
+        /// <returns>A list of tuples representing the number of passengers for each unique occupation</returns>
         public static List<(string, int)> GetOccupationsAndAmounts(this List<Passenger> passengers)
         {
             List<(string, int)> occupations = passengers
@@ -137,7 +173,12 @@ namespace Csharp_console_app
             return occupations;
         }
 
-
+        /// <summary>
+        /// Returns a list of tuples representing the number of passengers in each age group
+        /// </summary>
+        /// <param name="passengers">A list of passengers</param>
+        /// <param name="ageGroups">A list of tuples representing age group name and the age lower bound</param>
+        /// <returns>A list of tuples representing the age groups name, the age lower bound, and the amount of people who fall into the desired range </returns>
         public static List<(string, int, int)> GetAgeGroupAmounts(this List<Passenger> passengers, List<(string, int)> ageGroups)
         {
             List<(string, int, int)> ageGroupsWithAmounts = new List<(string, int, int)>() { };
@@ -167,6 +208,10 @@ namespace Csharp_console_app
 
     }
 
+
+    /// <summary>
+    /// Represents a ship and its information
+    /// </summary>
     public class Ship
     {
         public string DestinationCountry { get; set; }
@@ -186,9 +231,10 @@ namespace Csharp_console_app
 
     }
 
+
     public class Age
     {
-        // I don't think this class is needed (or a good idea), I'm keeping it just as an idea
+        // I don't think this class is needed (or a good idea), I'm keeping it just in case
         public int Years { get; set; }
         public int Months { get; set; }
 
@@ -234,5 +280,4 @@ namespace Csharp_console_app
                 return $"{Years} and {Months} months";
         }
     }
-
 }

@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+﻿/*
+ *                            Menu.cs
+ * 
+ *  Here you can find the 2 classes responsible for creating menus
+ *  
+ */
 
 namespace Csharp_console_app
 {
+    /// <summary>
+    /// A simple Menu creator
+    /// </summary>
     internal class Menu
     {
         public Dictionary<int, MenuOption> Options { get; set; }
@@ -21,7 +24,13 @@ namespace Csharp_console_app
         public Menu(bool withExit, params MenuOption[] options) : this(withExit: withExit, prompt: ">", options) { }
         public Menu(string prompt, params MenuOption[] options) : this(withExit: true, prompt: prompt, options) { }
 
-        public Menu(bool withExit = true, string prompt = ">", params MenuOption[] options)
+        /// <summary>
+        /// Creates a new Menu
+        /// </summary>
+        /// <param name="withExit">Whether an "Exit" option should be included in the menu</param>
+        /// <param name="prompt">The prompt to display when waiting for user input</param>
+        /// <param name="options">The menu options</param>
+        public Menu(bool withExit, string prompt, params MenuOption[] options)
         {
             Options = new Dictionary<int, MenuOption>();
 
@@ -39,7 +48,9 @@ namespace Csharp_console_app
         }
 
 
-
+        /// <summary>
+        /// Displays the menu options to the console.
+        /// </summary>
         public void DisplayOptions()
         {
             Console.WriteLine("");
@@ -50,47 +61,43 @@ namespace Csharp_console_app
             Console.WriteLine("");
         }
 
-
+        /// <summary>
+        /// Runs the menu, repeatedly displaying the options and prompting the user for input until the user selects the "Exit" option (if enabled).
+        /// </summary>
         public void Run()
         {
-            string choice = "";
+            string choice;
+            int choiceNum;
 
-            while (choice != $"{Options.Count}")
+            do
             {
                 choice = "";
-                int choiceNum;
+                DisplayOptions();
 
-                this.DisplayOptions();
-
-                while(!(int.TryParse(choice, out choiceNum) && Options.ContainsKey(choiceNum)))
+                while (!(int.TryParse(choice, out choiceNum) && Options.ContainsKey(choiceNum)))
                 {
                     Console.Write($"{Prompt} ");
                     choice = Console.ReadLine();
                 }
 
                 Options[choiceNum].Action();
-
-
-                if (!WithExit)
-                    break;
             }
+            while (WithExit && choiceNum != Options.Count);
         }
     }
 
+    /// <summary>
+    /// Menu options just for the sake of the Menu class
+    /// </summary>
     public class MenuOption
     {
         public string Name { get; set; }
         public Action Action { get; set; }
-
-        // the menu options could have additional parameters for a "success" and "fail" message
-
 
         public MenuOption(string name, Action action)
         {
             Name = name;
             Action = action;
         }
-
-
     }
 }
