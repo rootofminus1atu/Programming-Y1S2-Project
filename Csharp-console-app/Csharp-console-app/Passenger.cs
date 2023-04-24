@@ -100,13 +100,13 @@ namespace Csharp_console_app
         /// <returns>A list of all the unique ships from the Passenger list</returns>
         public static List<Ship> GetShips(this List<Passenger> passengers)
         {
-            List<Ship> ships = passengers
+            List<Ship> uniqueShips = passengers
                 .Select(x => x.Ship)
                 .GroupBy(x => x.ShipID)
                 .Select(x => x.First())  // this is wacky but it works
                 .ToList();
 
-            return ships;
+            return uniqueShips;
         }
 
         // questionable implementation

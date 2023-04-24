@@ -81,6 +81,10 @@ namespace Csharp_console_app
                 }
 
                 Options[choiceNum].Action();
+
+                //Console.Write("\nPress any key to continue");
+                //Console.ReadKey();
+                //Console.Clear();
             }
             while (WithExit && choiceNum != Options.Count);
         }
