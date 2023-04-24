@@ -17,7 +17,7 @@ namespace Csharp_console_app
     {
         static void Main(string[] args)
         {
-            string filePath = @"../../../../../faminefiletoanalyse.csv";
+            string filePath = @"../../../../../testfile.csv";
 
             List<Passenger> passengerList = GetPassengerData(filePath);
 
