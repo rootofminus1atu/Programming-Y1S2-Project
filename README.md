@@ -8,4 +8,4 @@ The console app consists of 3 files:
 - Menu.cs - A simple Menu creator, to automate the process of creating menus.
 
 # The React app
-An additional challenge that hasn't been finished yet. To include data visualization.
+An additional challenge that hasn't been finished yet. To include data visualization. (I might use Next.js in the future)
